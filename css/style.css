@@ -1,4 +1,14 @@
-html, body, #mapid {
-   height: 90%;
-   width: 100%;
+#mapid {
+   height: 500px;
+   width: 80%;
+   display: inline-block;
+}
+
+#panel {
+    width: 16%;
+    height: 500px;
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+    border: 2px solid black;
 }
