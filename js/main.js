@@ -5,6 +5,7 @@ function main(){
     const datasource = "data/crimes_2016_district1.geojson";
     var map = createMap();
     var data = getData(datasource, map);
+
 };
 
 //function to create and add data to the map
@@ -48,6 +49,7 @@ function getData(datasource, map){
         success: function(response){
             // return response;
             createSymbols(response, map);
+            createHeatmap(response, map);
         }
     });
 };
@@ -99,4 +101,18 @@ function pointToLayer(feature, latlng) {
     //     }
     // })
     return layer;
+};
+
+//add heat map to map
+function createHeatmap(data,map){
+
+  //create array of location points lat/lng/intensity
+  var locations = data.features.map(function(rat) {
+    var location = rat.geometry.coordinates.reverse();
+    location.push(0.5);
+    return location;
+  });
+  //use heatLayer to create heatmap based on locations array
+  var heat = L.heatLayer(locations,{radius:10}).addTo(map);
+
 };
