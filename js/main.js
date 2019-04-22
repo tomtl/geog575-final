@@ -1,3 +1,9 @@
+// Variable to store the layers that the user has selected
+var onLayers = [];
+// Global undefined variables for the layers that the user can control
+var heatMapLayer;
+var crimeLayer;
+
 main()
 
 function main(){
@@ -5,7 +11,7 @@ function main(){
     const datasource = "data/crimes_2016_district1.geojson";
     var map = createMap();
     var data = getData(datasource, map);
-
+    addEvents(map);
 };
 
 //function to create and add data to the map
@@ -48,9 +54,12 @@ function getData(datasource, map){
         dataType: "json",
         success: function(response){
             // return response;
-            createSymbols(response, map);
-            createHeatmap(response, map);
+            crimeLayer = createSymbols(response, map);
+            onLayers.push(crimeLayer);
+            heatMapLayer = createHeatmap(response, map);
+            onLayers.push(heatMapLayer);
         }
+
     });
 };
 
@@ -104,15 +113,49 @@ function pointToLayer(feature, latlng) {
 };
 
 //add heat map to map
-function createHeatmap(data,map){
+    function createHeatmap(data,map){
 
-  //create array of location points lat/lng/intensity
-  var locations = data.features.map(function(rat) {
-    var location = rat.geometry.coordinates.reverse();
-    location.push(0.5);
-    return location;
-  });
-  //use heatLayer to create heatmap based on locations array
-  var heat = L.heatLayer(locations,{radius:10}).addTo(map);
+        //create array of location points lat/lng/intensity
+        var locations = data.features.map(function(rat) {
+            var location = rat.geometry.coordinates.reverse();
+            location.push(0.5);
+            return location;
+        });
+        //use heatLayer to create heatmap based on locations array
+        var heat = L.heatLayer(locations,{radius:10}).addTo(map);
 
-};
+        return heat;
+
+        // var heatMapButton = document.getElementById("heatMap");
+        // var other = document.getElementById("other");
+
+        // heatMapButton.addEventListener("click", function() {
+        //     map.removeLayer(heat);
+        // });
+        //
+        // other.addEventListener("click", function() {
+        //     var heat = L.heatLayer(locations,{radius:10}).addTo(map);
+        // });
+
+    };
+
+    function addEvents(map){
+        var heatMapButton = document.getElementById("heatMap");
+
+        heatMapButton.addEventListener("click", function() {
+            this.classList.toggle("selected");
+            var layerIndex = onLayers.indexOf(heatMapLayer);
+            if (layerIndex === -1){
+                map.addLayer(heatMapLayer)
+                onLayers.push(heatMapLayer);
+            }
+            else {
+                map.removeLayer(heatMapLayer);
+                onLayers.splice(layerIndex,1);
+            }
+        });
+
+
+    };
+
+
