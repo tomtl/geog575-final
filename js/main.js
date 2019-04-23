@@ -66,7 +66,7 @@ function getData(datasource, map){
 // proportion circle markers
 function createSymbols(data, map){
     //create a Leaflet GeoJSON layer and add it to the map
-    L.geoJson(data, {
+    var crimes = L.geoJson(data, {
         // filter: function(feature, layer) {
         //     if (feature.properties.Year == year) {
         //         return true;
@@ -76,6 +76,8 @@ function createSymbols(data, map){
             return pointToLayer(feature, latlng)
         }
     }).addTo(map);
+
+    return crimes;
 };
 
 // convert markets to circle markets
@@ -139,9 +141,13 @@ function pointToLayer(feature, latlng) {
 
     };
 
+    // Adds the event listeners for the map buttons
     function addEvents(map){
+        // Variables for DOM buttons
         var heatMapButton = document.getElementById("heatMap");
+        var crimeLocationButton = document.getElementById("crime");
 
+        // Toggles the layer on and off and toggles the button selected class
         heatMapButton.addEventListener("click", function() {
             this.classList.toggle("selected");
             var layerIndex = onLayers.indexOf(heatMapLayer);
@@ -151,6 +157,20 @@ function pointToLayer(feature, latlng) {
             }
             else {
                 map.removeLayer(heatMapLayer);
+                onLayers.splice(layerIndex,1);
+            }
+        });
+
+        // Toggles the layer on and off and toggles the button selected class
+        crimeLocationButton.addEventListener("click", function() {
+            this.classList.toggle("selected");
+            var layerIndex = onLayers.indexOf(crimeLayer);
+            if (layerIndex === -1){
+                map.addLayer(crimeLayer)
+                onLayers.push(crimeLayer);
+            }
+            else {
+                map.removeLayer(crimeLayer);
                 onLayers.splice(layerIndex,1);
             }
         });

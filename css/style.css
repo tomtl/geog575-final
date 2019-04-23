@@ -37,21 +37,27 @@ li{
     list-style: none;
 }
 
+button:focus {
+    outline:0;
+}
+
 
 .mapControl{
     display: inline-block;
     text-align: center;
     text-decoration: none;
     margin: 2px 0;
-    border: solid 1px #1650ff;
+    border: solid 1px transparent;
     border-radius: 4px;
     padding: 0.5em 1em;
-    background-color: #ffffff;
-    color: #1650ff;
+    background-color: #1650ff;
+    color: #ffffff;
+
 }
 
 .selected{
-    border: solid 1px transparent;
+
     background-color: #ffffff;
     color: #1650ff;
+    border: solid 1px #1650ff;
 }
