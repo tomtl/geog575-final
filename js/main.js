@@ -3,6 +3,7 @@ var activeLayers = [];
 // Global undefined variables for the layers that the user can control
 var heatMapLayer;
 var crimeLayer;
+var censusBlocksLayer;
 
 main()
 
@@ -10,6 +11,7 @@ function main(){
     // function that runs everything
     const datasource = "data/crimes_2016_district1.geojson";
     var map = createMap();
+    addCensusBlocks(map);
     var data = getData(datasource, map);
     addEvents(map);
 };
@@ -115,67 +117,88 @@ function pointToLayer(feature, latlng) {
 };
 
 //add heat map to map
-    function createHeatmap(data,map){
+function createHeatmap(data,map){
 
-        //create array of location points lat/lng/intensity
-        var locations = data.features.map(function(rat) {
-            var location = rat.geometry.coordinates.reverse();
-            location.push(0.5);
-            return location;
-        });
-        //use heatLayer to create heatmap based on locations array
-        var heat = L.heatLayer(locations,{radius:10}).addTo(map);
+    //create array of location points lat/lng/intensity
+    var locations = data.features.map(function(rat) {
+        var location = rat.geometry.coordinates.reverse();
+        location.push(0.5);
+        return location;
+    });
+    //use heatLayer to create heatmap based on locations array
+    var heat = L.heatLayer(locations,{radius:10}).addTo(map);
 
-        return heat;
+    return heat;
 
-        // var heatMapButton = document.getElementById("heatMap");
-        // var other = document.getElementById("other");
+};
 
-        // heatMapButton.addEventListener("click", function() {
-        //     map.removeLayer(heat);
-        // });
-        //
-        // other.addEventListener("click", function() {
-        //     var heat = L.heatLayer(locations,{radius:10}).addTo(map);
-        // });
+// Adds the event listeners for the map buttons
+function addEvents(map){
+    // Variables for DOM buttons
+    var heatMapButton = document.getElementById("heatMap");
+    var crimeLocationButton = document.getElementById("crime");
+    var censusBlocksButton = document.getElementById("censusBlocks");
 
-    };
+    // Toggles the layer on and off and toggles the button selected class
+    heatMapButton.addEventListener("click", function() {
+        this.classList.toggle("selected");
+        var layerIndex = activeLayers.indexOf(heatMapLayer);
+        if (layerIndex === -1){
+            map.addLayer(heatMapLayer)
+            activeLayers.push(heatMapLayer);
+        }
+        else {
+            map.removeLayer(heatMapLayer);
+            activeLayers.splice(layerIndex,1);
+        }
+    });
 
-    // Adds the event listeners for the map buttons
-    function addEvents(map){
-        // Variables for DOM buttons
-        var heatMapButton = document.getElementById("heatMap");
-        var crimeLocationButton = document.getElementById("crime");
+    // Toggles the layer on and off and toggles the button selected class
+    crimeLocationButton.addEventListener("click", function() {
+        this.classList.toggle("selected");
+        var layerIndex = activeLayers.indexOf(crimeLayer);
+        if (layerIndex === -1){
+            map.addLayer(crimeLayer)
+            activeLayers.push(crimeLayer);
+        }
+        else {
+            map.removeLayer(crimeLayer);
+            activeLayers.splice(layerIndex,1);
+        }
+    });
 
-        // Toggles the layer on and off and toggles the button selected class
-        heatMapButton.addEventListener("click", function() {
-            this.classList.toggle("selected");
-            var layerIndex = activeLayers.indexOf(heatMapLayer);
-            if (layerIndex === -1){
-                map.addLayer(heatMapLayer)
-                activeLayers.push(heatMapLayer);
-            }
-            else {
-                map.removeLayer(heatMapLayer);
-                activeLayers.splice(layerIndex,1);
-            }
-        });
+    // Toggles the layer on and off and toggles the button selected class
+    censusBlocksButton.addEventListener("click", function() {
+        this.classList.toggle("selected");
+        var layerIndex = activeLayers.indexOf(censusBlocksLayer);
+        if (layerIndex === -1){
+            map.addLayer(censusBlocksLayer)
+            activeLayers.push(censusBlocksLayer);
+        }
+        else {
+            map.removeLayer(censusBlocksLayer);
+            activeLayers.splice(layerIndex,1);
+        }
+    });
+};
 
-        // Toggles the layer on and off and toggles the button selected class
-        crimeLocationButton.addEventListener("click", function() {
-            this.classList.toggle("selected");
-            var layerIndex = activeLayers.indexOf(crimeLayer);
-            if (layerIndex === -1){
-                map.addLayer(crimeLayer)
-                activeLayers.push(crimeLayer);
-            }
-            else {
-                map.removeLayer(crimeLayer);
-                activeLayers.splice(layerIndex,1);
-            }
-        });
+function addCensusBlocks(map){
+    const datasource = "data/chicagoCensusBlocks.geojson";
 
+    let data = $.ajax(datasource, {
+        dataType: "json",
+        success: function(response){
+            // return response;
+            censusBlocksLayer = createCensusBlocks(response, map);
+            activeLayers.push(censusBlocksLayer);
+        }
 
-    };
+    });
+};
 
+function createCensusBlocks(response, map){
+    var censusBlocks = L.geoJSON().addTo(map);
+    censusBlocks.addData(response);
 
+    return censusBlocks;
+};
