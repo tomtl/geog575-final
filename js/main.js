@@ -1,5 +1,5 @@
 // Variable to store the layers that the user has selected
-var onLayers = [];
+var activeLayers = [];
 // Global undefined variables for the layers that the user can control
 var heatMapLayer;
 var crimeLayer;
@@ -55,9 +55,9 @@ function getData(datasource, map){
         success: function(response){
             // return response;
             crimeLayer = createSymbols(response, map);
-            onLayers.push(crimeLayer);
+            activeLayers.push(crimeLayer);
             heatMapLayer = createHeatmap(response, map);
-            onLayers.push(heatMapLayer);
+            activeLayers.push(heatMapLayer);
         }
 
     });
@@ -150,28 +150,28 @@ function pointToLayer(feature, latlng) {
         // Toggles the layer on and off and toggles the button selected class
         heatMapButton.addEventListener("click", function() {
             this.classList.toggle("selected");
-            var layerIndex = onLayers.indexOf(heatMapLayer);
+            var layerIndex = activeLayers.indexOf(heatMapLayer);
             if (layerIndex === -1){
                 map.addLayer(heatMapLayer)
-                onLayers.push(heatMapLayer);
+                activeLayers.push(heatMapLayer);
             }
             else {
                 map.removeLayer(heatMapLayer);
-                onLayers.splice(layerIndex,1);
+                activeLayers.splice(layerIndex,1);
             }
         });
 
         // Toggles the layer on and off and toggles the button selected class
         crimeLocationButton.addEventListener("click", function() {
             this.classList.toggle("selected");
-            var layerIndex = onLayers.indexOf(crimeLayer);
+            var layerIndex = activeLayers.indexOf(crimeLayer);
             if (layerIndex === -1){
                 map.addLayer(crimeLayer)
-                onLayers.push(crimeLayer);
+                activeLayers.push(crimeLayer);
             }
             else {
                 map.removeLayer(crimeLayer);
-                onLayers.splice(layerIndex,1);
+                activeLayers.splice(layerIndex,1);
             }
         });
 
