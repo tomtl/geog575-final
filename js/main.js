@@ -163,9 +163,9 @@ function addEvents(map){
     var crimeLocationButton = document.getElementById("crime");
     var censusBlocksButton = document.getElementById("censusBlocks");
 
-    var crimeAssaultButton = document.getElementById("crimeSelectorAssault");
-    var crimeArsonButton = document.getElementById("crime-selector-arson");
-    var crimeRobberyButton = document.getElementById("crime-selector-robbery");
+    // var crimeAssaultButton = document.getElementById("crimeSelectorAssault");
+    // var crimeArsonButton = document.getElementById("crime-selector-arson");
+    // var crimeRobberyButton = document.getElementById("crime-selector-robbery");
 
     // Toggles the layer on and off and toggles the button selected class
     heatMapButton.addEventListener("click", function() {
@@ -214,7 +214,34 @@ function addEvents(map){
         "crimeSelectorArson": "ARSON",
         "crimeSelectorAssault": "ASSAULT",
         "crimeSelectorBattery": "BATTERY",
-        "crimeSelectorBurglary": "BURGLARY"
+        "crimeSelectorBurglary": "BURGLARY",
+        "crimeSelectorConcealedCarry": "CONCEALED CARRY LICENSE VIOLATION",
+        "crimeSelectorCrimSexualAssault": "CRIM SEXUAL ASSAULT",
+        "crimeSelectorCriminalDamage": "CRIMINAL DAMAGE",
+        "crimeSelectorCriminalTresspass" : "CRIMINAL TRESPASS",
+        "crimeSelectorDeceptivePractice" : "DECEPTIVE PRACTICE",
+        "crimeSelectorGambling": "GAMBLING",
+        "crimeSelectorHomocide" : "HOMICIDE",
+        "crimeSelectorHumanTrafficking" : "HUMAN TRAFFICKING",
+        "crimeSelectorInterference" : "INTERFERENCE WITH PUBLIC OFFICER",
+        "crimeSelectorIntimidation" : "INTIMIDATION",
+        "crimeSelectorKidnapping" : "KIDNAPPING",
+        "crimeSelectorLiquor" : "LIQUOR LAW VIOLATION",
+        "crimeSelectorMotorVehicleTheft" : "MOTOR VEHICLE THEFT",
+        "crimeSelectorNarcotics" : "NARCOTICS",
+        "crimeSelectorNonCriminal" : "NON-CRIMINAL",
+        "crimeSelectorObscenity" : "OBSCENITY",
+        "crimeSelectorChildren" : "OFFENSE INVOLVING CHILDREN",
+        "crimeSelectorOtherNarcotic" : "OTHER NARCOTIC VIOLATION",
+        "crimeSelectorOtherOffense" : "OTHER OFFENSE",
+        "crimeSelectorProstitution" : "PROSTITUTION",
+        "crimeSelectorPublicIndecency" : "PUBLIC INDECENCY",
+        "crimeSelectorPublicPeaceViolation" : "PUBLIC PEACE VIOLATION",
+        "crimeSelectorRobbery" : "ROBBERY",
+        "crimeSelectorSexOffense" : "SEX OFFENSE",
+        "crimeSelectorStalking" : "STALKING",
+        "crimeSelectorTheft" : "THEFT",
+        "crimeSelectorWeaponsViolation" : "WEAPONS VIOLATION",
     };
 
     // crime button listeners
@@ -231,11 +258,14 @@ function addEvents(map){
 
                 // check if layer is added
                 if (map.hasLayer(mapLayerGroups[crimeType])) {
-                    // remove layer
+                    // remove layer if present
                     map.removeLayer(mapLayerGroups[crimeType]);
-                } else {
-                    // add layer
+                } else if (crimeType in mapLayerGroups) {
+                    // add layer if not present but exists in map layer groups
                     map.addLayer(mapLayerGroups[crimeType]);
+                } else {
+                    // if layer not present in dataset, do nothing and report layer
+                    console.log(crimeType + " layer is missing");
                 };
             });
         };
