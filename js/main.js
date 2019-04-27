@@ -4,6 +4,7 @@ var activeLayers = [];
 var heatMapLayer;
 var crimeLayer;
 var censusBlocksLayer;
+var mapLayerGroups = [];
 
 main()
 
@@ -76,8 +77,29 @@ function createSymbols(data, map){
         // },
         pointToLayer: function(feature, latlng) {
             return pointToLayer(feature, latlng)
-        }
-    }).addTo(map);
+        },
+        onEachFeature: onEachFeature
+    })
+    // .addTo(map);
+
+    function onEachFeature(feature, featureLayer) {
+        // Add the crime points as a Layer Group
+
+        //does layerGroup already exist? if not create it and add to map
+        let crimeType = feature.properties["Type"];
+        let layerGroup = mapLayerGroups[crimeType];
+
+        if (layerGroup === undefined) {
+            layerGroup = new L.layerGroup();
+            //add the layer to the map
+            layerGroup.addTo(map);
+            //store layer
+            mapLayerGroups[crimeType] = layerGroup;
+        };
+
+        //add the feature to the layer
+        mapLayerGroups[crimeType].addLayer(featureLayer);
+    };
 
     return crimes;
 };
@@ -116,6 +138,8 @@ function pointToLayer(feature, latlng) {
     return layer;
 };
 
+
+
 //add heat map to map
 function createHeatmap(data,map){
 
@@ -138,6 +162,10 @@ function addEvents(map){
     var heatMapButton = document.getElementById("heatMap");
     var crimeLocationButton = document.getElementById("crime");
     var censusBlocksButton = document.getElementById("censusBlocks");
+
+    var crimeAssaultButton = document.getElementById("crimeSelectorAssault");
+    var crimeArsonButton = document.getElementById("crime-selector-arson");
+    var crimeRobberyButton = document.getElementById("crime-selector-robbery");
 
     // Toggles the layer on and off and toggles the button selected class
     heatMapButton.addEventListener("click", function() {
@@ -179,6 +207,17 @@ function addEvents(map){
             map.removeLayer(censusBlocksLayer);
             activeLayers.splice(layerIndex,1);
         }
+    });
+
+    crimeAssaultButton.addEventListener("click", function( event ) {
+
+        if (map.hasLayer(mapLayerGroups["ASSAULT"])) {
+            // remove layer
+            map.removeLayer(mapLayerGroups["ASSAULT"]);
+        } else {
+            // add layer
+            map.addLayer(mapLayerGroups["ASSAULT"]);
+        };
     });
 };
 
