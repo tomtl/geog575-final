@@ -4,6 +4,7 @@ var activeLayers = [];
 var heatMapLayer;
 var crimeLayer;
 var censusBlocksLayer;
+var mapLayerGroups = [];
 
 main()
 
@@ -76,8 +77,29 @@ function createSymbols(data, map){
         // },
         pointToLayer: function(feature, latlng) {
             return pointToLayer(feature, latlng)
-        }
-    }).addTo(map);
+        },
+        onEachFeature: onEachFeature
+    })
+    // .addTo(map);
+
+    function onEachFeature(feature, featureLayer) {
+        // Add the crime points as a Layer Group
+
+        //does layerGroup already exist? if not create it and add to map
+        let crimeType = feature.properties["Type"];
+        let layerGroup = mapLayerGroups[crimeType];
+
+        if (layerGroup === undefined) {
+            layerGroup = new L.layerGroup();
+            //add the layer to the map
+            layerGroup.addTo(map);
+            //store layer
+            mapLayerGroups[crimeType] = layerGroup;
+        };
+
+        //add the feature to the layer
+        mapLayerGroups[crimeType].addLayer(featureLayer);
+    };
 
     return crimes;
 };
@@ -123,6 +145,8 @@ function pointToLayer(feature, latlng) {
     return layer;
 };
 
+
+
 //add heat map to map
 function createHeatmap(data,map){
 
@@ -145,6 +169,10 @@ function addEvents(map){
     var heatMapButton = document.getElementById("heatMap");
     var crimeLocationButton = document.getElementById("crime");
     var censusBlocksButton = document.getElementById("censusBlocks");
+
+    // var crimeAssaultButton = document.getElementById("crimeSelectorAssault");
+    // var crimeArsonButton = document.getElementById("crime-selector-arson");
+    // var crimeRobberyButton = document.getElementById("crime-selector-robbery");
 
     // Toggles the layer on and off and toggles the button selected class
     heatMapButton.addEventListener("click", function() {
@@ -187,6 +215,68 @@ function addEvents(map){
             activeLayers.splice(layerIndex,1);
         }
     });
+
+    // crime types and crime button selector names
+    let crimeButtons = {
+        "crimeSelectorArson": "ARSON",
+        "crimeSelectorAssault": "ASSAULT",
+        "crimeSelectorBattery": "BATTERY",
+        "crimeSelectorBurglary": "BURGLARY",
+        "crimeSelectorConcealedCarry": "CONCEALED CARRY LICENSE VIOLATION",
+        "crimeSelectorCrimSexualAssault": "CRIM SEXUAL ASSAULT",
+        "crimeSelectorCriminalDamage": "CRIMINAL DAMAGE",
+        "crimeSelectorCriminalTresspass" : "CRIMINAL TRESPASS",
+        "crimeSelectorDeceptivePractice" : "DECEPTIVE PRACTICE",
+        "crimeSelectorGambling": "GAMBLING",
+        "crimeSelectorHomocide" : "HOMICIDE",
+        "crimeSelectorHumanTrafficking" : "HUMAN TRAFFICKING",
+        "crimeSelectorInterference" : "INTERFERENCE WITH PUBLIC OFFICER",
+        "crimeSelectorIntimidation" : "INTIMIDATION",
+        "crimeSelectorKidnapping" : "KIDNAPPING",
+        "crimeSelectorLiquor" : "LIQUOR LAW VIOLATION",
+        "crimeSelectorMotorVehicleTheft" : "MOTOR VEHICLE THEFT",
+        "crimeSelectorNarcotics" : "NARCOTICS",
+        "crimeSelectorNonCriminal" : "NON-CRIMINAL",
+        "crimeSelectorObscenity" : "OBSCENITY",
+        "crimeSelectorChildren" : "OFFENSE INVOLVING CHILDREN",
+        "crimeSelectorOtherNarcotic" : "OTHER NARCOTIC VIOLATION",
+        "crimeSelectorOtherOffense" : "OTHER OFFENSE",
+        "crimeSelectorProstitution" : "PROSTITUTION",
+        "crimeSelectorPublicIndecency" : "PUBLIC INDECENCY",
+        "crimeSelectorPublicPeaceViolation" : "PUBLIC PEACE VIOLATION",
+        "crimeSelectorRobbery" : "ROBBERY",
+        "crimeSelectorSexOffense" : "SEX OFFENSE",
+        "crimeSelectorStalking" : "STALKING",
+        "crimeSelectorTheft" : "THEFT",
+        "crimeSelectorWeaponsViolation" : "WEAPONS VIOLATION",
+    };
+
+    // crime button listeners
+    for (var key in crimeButtons) {
+        // loop through the crime types and button names
+        if (crimeButtons.hasOwnProperty(key)) {
+            // console.log(key, crimeButtons[key]);
+
+            let crimeSelectorButton = key;
+            let crimeType = crimeButtons[key];
+
+            // add click event listener
+            document.getElementById(crimeSelectorButton).addEventListener("click", function( event ) {
+
+                // check if layer is added
+                if (map.hasLayer(mapLayerGroups[crimeType])) {
+                    // remove layer if present
+                    map.removeLayer(mapLayerGroups[crimeType]);
+                } else if (crimeType in mapLayerGroups) {
+                    // add layer if not present but exists in map layer groups
+                    map.addLayer(mapLayerGroups[crimeType]);
+                } else {
+                    // if layer not present in dataset, do nothing and report layer
+                    console.log(crimeType + " layer is missing");
+                };
+            });
+        };
+    };
 };
 
 function addCensusBlocks(map){
