@@ -209,16 +209,37 @@ function addEvents(map){
         }
     });
 
-    crimeAssaultButton.addEventListener("click", function( event ) {
+    // crime types and crime button selector names
+    let crimeButtons = {
+        "crimeSelectorArson": "ARSON",
+        "crimeSelectorAssault": "ASSAULT",
+        "crimeSelectorBattery": "BATTERY",
+        "crimeSelectorBurglary": "BURGLARY"
+    };
 
-        if (map.hasLayer(mapLayerGroups["ASSAULT"])) {
-            // remove layer
-            map.removeLayer(mapLayerGroups["ASSAULT"]);
-        } else {
-            // add layer
-            map.addLayer(mapLayerGroups["ASSAULT"]);
+    // crime button listeners
+    for (var key in crimeButtons) {
+        // loop through the crime types and button names
+        if (crimeButtons.hasOwnProperty(key)) {
+            // console.log(key, crimeButtons[key]);
+
+            let crimeSelectorButton = key;
+            let crimeType = crimeButtons[key];
+
+            // add click event listener
+            document.getElementById(crimeSelectorButton).addEventListener("click", function( event ) {
+
+                // check if layer is added
+                if (map.hasLayer(mapLayerGroups[crimeType])) {
+                    // remove layer
+                    map.removeLayer(mapLayerGroups[crimeType]);
+                } else {
+                    // add layer
+                    map.addLayer(mapLayerGroups[crimeType]);
+                };
+            });
         };
-    });
+    };
 };
 
 function addCensusBlocks(map){
