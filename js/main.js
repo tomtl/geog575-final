@@ -121,7 +121,7 @@ function pointToLayer(feature, latlng) {
 
     let layer = L.circleMarker(latlng, options);
 
-    var popupContent = "<p><b>" + feature.properties.Primary_Ty + "</b> "
+    var popupContent = "<p><b>" + feature.properties.Type + "</b> "
     popupContent += "<p><b>Case Number:</b> " + feature.properties.Case_Numbe + "</p>";
 
     var date = feature.properties.Date.split(" ")[0]
