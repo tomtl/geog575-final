@@ -94,25 +94,32 @@ function pointToLayer(feature, latlng) {
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8,
-        radius: 1.0
+        radius: 2
     };
 
     let layer = L.circleMarker(latlng, options);
 
-    // var popup = new Popup(feature, attributes, year, layer, attribute);
-    // popup.bindToLayer();
+    var popupContent = "<p><b>" + feature.properties.Primary_Ty + "</b> "
+    popupContent += "<p><b>Case Number:</b> " + feature.properties.Case_Numbe + "</p>";
 
-    // layer.on({
-    //     mouseover: function(){
-    //         this.openPopup();
-    //     },
-    //     mouseout: function(){
-    //         this.closePopup();
-    //     },
-    //     click: function(){
-    //       $("#panel").html(popup.panelContent);
-    //     }
-    // })
+    var date = feature.properties.Date.split(" ")[0]
+
+    popupContent += "<p><b>Date:</b> " + date + "</p>";
+    popupContent += "<p><b>Block:</b> " + feature.properties.Block + "</p>";
+    popupContent += "<p><b>Description:</b> " + feature.properties.Descriptio + "</p>";
+
+
+    layer.bindPopup(popupContent);
+
+    //event listeners to open popup on hover
+     layer.on({
+         click: function(){
+             this.openPopup();
+         },
+         mouseout: function(){
+             this.closePopup();
+         }
+     });
     return layer;
 };
 
