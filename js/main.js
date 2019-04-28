@@ -251,7 +251,14 @@ function addEvents(map){
         "crimeSelectorWeaponsViolation" : "WEAPONS VIOLATION",
     };
 
+
     // crime button listeners
+
+    $('#accordion').accordion({
+        active: false,
+        collapsible: true
+    });
+
     for (var key in crimeButtons) {
         // loop through the crime types and button names
         if (crimeButtons.hasOwnProperty(key)) {
