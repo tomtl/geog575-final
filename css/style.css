@@ -61,3 +61,7 @@ button:focus {
     color: #1650ff;
     border: solid 1px #1650ff;
 }
+
+#canvasHolder {
+    height: 19vh;
+}
