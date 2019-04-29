@@ -70,14 +70,6 @@ button:focus {
   flex: 50%;
 }
 
-/* .crime-selectors-panel {
-  float: left;
-  width: 50%;
+#canvasHolder {
+    height: 19vh;
 }
-
-/* Clear floats after the columns */
-/* .crime-selectors-column:after {
-  content: "";
-  display: table;
-  clear: both;
-} */

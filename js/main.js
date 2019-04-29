@@ -46,6 +46,40 @@ function createMap(){
     // add basemap control
     L.control.layers(baseTilesets).addTo(map);
 
+    //bar chart
+    let ars = 4
+    let ass = 588
+    let bat = 1319
+    let bur = 204
+    let csa = 55
+    let cda = 727
+    let ctr = 522
+    let dpr = 1615
+    let hom = 9
+    let ht = 1
+    let ipo = 17
+    let int = 7
+    let kid = 7
+    let llv = 8
+    let mvt = 221
+    let nar = 125
+    let ncr = 4
+    let obs = 3
+    let ofc = 29
+    let off = 469
+    let pro = 6
+    let pin = 3
+    let ppv = 74
+    let rob = 444
+    let sof = 39
+    let sta = 7
+    let the = 6261
+    let wvi = 32
+
+    //let data = [ars,ass,bur,csa,cda,ctr,dpr,hom,ht,ipo,int,kid,llv,mvt,nar,ncr,obs,ofc,off,pro,pin,ppv,rob,sof,sta,the,wvi];
+    let data = [bat,cda,ctr,dpr,off,rob,the];
+    makeBarChart(data);
+
     return map;
 };
 
@@ -121,6 +155,8 @@ function pointToLayer(feature, latlng) {
 
     let layer = L.circleMarker(latlng, options);
 
+
+
     var popupContent = "<p><b>" + feature.properties.Type + "</b> "
     popupContent += "<p><b>Case Number:</b> " + feature.properties.Case_Numbe + "</p>";
 
@@ -143,6 +179,7 @@ function pointToLayer(feature, latlng) {
          }
      });
     return layer;
+
 };
 
 
@@ -262,7 +299,7 @@ function addEvents(map){
     for (var key in crimeButtons) {
         // loop through the crime types and button names
         if (crimeButtons.hasOwnProperty(key)) {
-            // console.log(key, crimeButtons[key]);
+            //console.log(crimeButtons[key]);
 
             let crimeSelectorButton = key;
             let crimeType = crimeButtons[key];
@@ -306,3 +343,57 @@ function createCensusBlocks(response, map){
 
     return censusBlocks;
 };
+
+
+
+//bar chart
+    function makeBarChart(data){
+        var ctxB = document.getElementById("barChart").getContext('2d');
+        var myBarChart = new Chart(ctxB, {
+            type: 'bar',
+            data: {
+                labels: ["Battery", "Criminal Damage", "Criminal Trespass", "Deceptive Practice", "Other Offense","Robbery","Theft"],
+                datasets: [{
+                    label: '# Crimes',
+                    data: data,
+                    backgroundColor: [
+                        '#e41a1c',
+                        '#377eb8',
+                        '#4daf4a',
+                        '#984ea3',
+                        '#ff7f00',
+                        '#ffff33',
+                        '#a65628'
+                    ],
+                    borderColor: [
+                        '#e41a1c',
+                        '#377eb8',
+                        '#4daf4a',
+                        '#984ea3',
+                        '#ff7f00',
+                        '#ffff33',
+                        '#a65628'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                },
+                layout: {
+                    padding: {
+                        left: 5,
+                        right: 5,
+                        top: 5,
+                        bottom: 15
+                    }
+                },
+                maintainAspectRatio: false
+            }
+        });
+    };
