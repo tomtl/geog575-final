@@ -15,6 +15,7 @@ function main(){
     addCensusBlocks(map);
     var data = getData(datasource, map);
     addEvents(map);
+    createSequenceControls(map, data);
 };
 
 //function to create and add data to the map
@@ -119,6 +120,19 @@ function createSymbols(data, map){
     function onEachFeature(feature, featureLayer) {
         // Add the crime points as a Layer Group
 
+        // get the hour from the Date column
+        let dateString = feature.properties.Date;
+        let timeString = dateString.split(" ");
+        let hour = parseInt(timeString[1].split(":")[0]);
+
+        // adjust hour for PM
+        if (timeString[2] == "PM"){
+            hour = hour + 12;
+        };
+
+        // add the hour as an extra feature property
+        feature.properties.hour = hour;
+
         //does layerGroup already exist? if not create it and add to map
         let crimeType = feature.properties["Type"];
         let layerGroup = mapLayerGroups[crimeType];
@@ -181,8 +195,6 @@ function pointToLayer(feature, latlng) {
     return layer;
 
 };
-
-
 
 //add heat map to map
 function createHeatmap(data,map){
@@ -397,3 +409,40 @@ function makeBarChart(data){
         }
     });
 };
+
+function createSequenceControls(map, data) {
+    let SequenceControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
+        onAdd: function(map) {
+            let container = L.DomUtil.create('div', 'sequence-control-container');
+
+            // title
+            $(container).append('<h3 class="sequence-title">Time of Day</h3>')
+
+            // range input slider
+            $(container).append('<input class="range-slider" type="range">')
+
+            // add skip buttons
+            $(container).append('<button class="skip" id="reverse" title="Reverse">&#8592;</button>');
+            $(container).append('<button class="skip" id="forward" title="Forward">&#8594;</button>');
+
+            // stop any event listeners on the map
+            $(container).on('mousedown mouseover dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+                L.DomEvent.disableClickPropagation(container);
+            });
+
+            return container;
+        }
+    });
+    map.addControl(new SequenceControl());
+
+    $('.range-slider').attr({
+        min: 0,
+        max: 24,
+        value: 12,
+        step: 1
+    });
+}
