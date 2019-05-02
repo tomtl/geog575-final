@@ -15,7 +15,7 @@ function main(){
     addCensusBlocks(map);
     var data = getData(datasource, map);
     addEvents(map);
-    createSequenceControls(map, data);
+    createTimeSlider();
 };
 
 //function to create and add data to the map
@@ -410,39 +410,19 @@ function makeBarChart(data){
     });
 };
 
-function createSequenceControls(map, data) {
-    let SequenceControl = L.Control.extend({
-        options: {
-            position: 'bottomleft'
-        },
-        onAdd: function(map) {
-            let container = L.DomUtil.create('div', 'sequence-control-container');
-
-            // title
-            $(container).append('<h3 class="sequence-title">Time of Day</h3>')
-
-            // range input slider
-            $(container).append('<input class="range-slider" type="range">')
-
-            // add skip buttons
-            $(container).append('<button class="skip" id="reverse" title="Reverse">&#8592;</button>');
-            $(container).append('<button class="skip" id="forward" title="Forward">&#8594;</button>');
-
-            // stop any event listeners on the map
-            $(container).on('mousedown mouseover dblclick', function(e){
-                L.DomEvent.stopPropagation(e);
-                L.DomEvent.disableClickPropagation(container);
-            });
-
-            return container;
-        }
-    });
-    map.addControl(new SequenceControl());
-
-    $('.range-slider').attr({
+function createTimeSlider() {
+    $("#time-slider").slider({
+        range: true,
         min: 0,
         max: 24,
-        value: 12,
-        step: 1
+        step: 1,
+        values: [1, 23],
+        slide: function( event, ui ) {
+            $( "#time" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        }
     });
-}
+    $("#time").val(
+        $("#time-slider").slider("values", 0) +
+      " - " + $("#time-slider").slider("values", 1)
+    );
+};
