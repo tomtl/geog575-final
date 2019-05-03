@@ -38,7 +38,7 @@ function createMap(){
 
     //create the map
     var map = L.map('mapid', {
-        center: [41.88, -87.6],
+        center: [41.86, -87.6],
         zoom: 13,
         layers: [tileStamen]
     });
@@ -46,7 +46,7 @@ function createMap(){
     // add basemap control
     L.control.layers(baseTilesets).addTo(map);
 
-    //bar chart
+    //establish variables for bar chart
     let ars = 4;
     let ass = 588;
     let bat = 1319;
@@ -76,7 +76,7 @@ function createMap(){
     let the = 6261;
     let wvi = 32;
 
-    //let data = [ars,ass,bur,csa,cda,ctr,dpr,hom,ht,ipo,int,kid,llv,mvt,nar,ncr,obs,ofc,off,pro,pin,ppv,rob,sof,sta,the,wvi];
+    //call bar chart function on desired variables
     let data = [bat,cda,ctr,dpr,off,rob,the];
     makeBarChart(data);
 
@@ -104,17 +104,13 @@ function getData(datasource, map){
 function createSymbols(data, map){
     //create a Leaflet GeoJSON layer and add it to the map
     var crimes = L.geoJson(data, {
-        // filter: function(feature, layer) {
-        //     if (feature.properties.Year == year) {
-        //         return true;
-        //     }
-        // },
+
         pointToLayer: function(feature, latlng) {
             return pointToLayer(feature, latlng)
         },
         onEachFeature: onEachFeature
     })
-    // .addTo(map);
+
 
     function onEachFeature(feature, featureLayer) {
         // Add the crime points as a Layer Group
@@ -140,7 +136,7 @@ function createSymbols(data, map){
 
 // convert markets to circle markets
 function pointToLayer(feature, latlng) {
-    // let attribute = "total";
+
 
     // marker options
     let options = {
@@ -156,7 +152,7 @@ function pointToLayer(feature, latlng) {
     let layer = L.circleMarker(latlng, options);
 
 
-
+    //create pop-ups
     var popupContent = "<p><b>" + feature.properties.Type + "</b> "
     popupContent += "<p><b>Case Number:</b> " + feature.properties.Case_Numbe + "</p>";
 
@@ -194,7 +190,7 @@ function createHeatmap(data,map){
         return location;
     });
     //use heatLayer to create heatmap based on locations array
-    var heat = L.heatLayer(locations,{radius:10}).addTo(map);
+    var heat = L.heatLayer(locations,{radius:10});
 
     return heat;
 
@@ -207,9 +203,7 @@ function addEvents(map){
     var crimeLocationButton = document.getElementById("crime");
     var censusBlocksButton = document.getElementById("censusBlocks");
 
-    // var crimeAssaultButton = document.getElementById("crimeSelectorAssault");
-    // var crimeArsonButton = document.getElementById("crime-selector-arson");
-    // var crimeRobberyButton = document.getElementById("crime-selector-robbery");
+
 
     // Toggles the layer on and off and toggles the button selected class
     heatMapButton.addEventListener("click", function() {
@@ -323,6 +317,7 @@ function addEvents(map){
     };
 };
 
+//function to load and add census block layers
 function addCensusBlocks(map){
     const datasource = "data/chicagoCensusBlocks.geojson";
 
@@ -338,15 +333,18 @@ function addCensusBlocks(map){
 };
 
 function createCensusBlocks(response, map){
-    var censusBlocks = L.geoJSON().addTo(map);
-    censusBlocks.addData(response);
+    var censusBlocks = L.geoJSON();
+    var myStyle = {
+      weight: 1
+    }
+    censusBlocks.addData(response).setStyle(myStyle);
 
     return censusBlocks;
 };
 
 
 
-//bar chart
+//bar chart function
 function makeBarChart(data){
     var ctxB = document.getElementById("barChart").getContext('2d');
     var myBarChart = new Chart(ctxB, {

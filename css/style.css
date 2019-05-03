@@ -62,8 +62,10 @@ button:focus {
     border: solid 1px #1650ff;
 }
 
+
+
 #canvasHolder {
-    height: 19vh;
+    height: 25vh;
 }
 
 #crime-selectors-panel {
